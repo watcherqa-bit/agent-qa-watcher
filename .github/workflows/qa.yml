@@ -18,14 +18,15 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Installer dépendances
+      - name: Lister les fichiers dans tickets
         run: |
-          pip install pandas openpyxl requests
+          echo "Contenu du dossier tickets :"
+          ls -l tickets
 
       - name: Exécuter l'analyse QA
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          FILE=$(ls tickets | head -n 1)
+          FILE=$(ls tickets/*.xlsx | head -n 1)
           echo "Ticket détecté : $FILE"
-          python scripts/qa_agent.py tickets/$FILE
+          python scripts/qa_agent.py "$FILE"
