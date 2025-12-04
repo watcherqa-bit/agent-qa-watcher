@@ -1,0 +1,31 @@
+name: Analyse QA automatique
+
+on:
+  push:
+    paths:
+      - "tickets/**"
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Installer dépendances
+        run: |
+          pip install pandas openpyxl requests
+
+      - name: Exécuter l'analyse QA
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          FILE=$(ls tickets | head -n 1)
+          echo "Ticket détecté : $FILE"
+          python scripts/qa_agent.py tickets/$FILE
